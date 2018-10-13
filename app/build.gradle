@@ -59,3 +59,8 @@ sceneform.asset('src/main/assets/flag/USMC flag.obj',
         'default',
         'src/main/assets/flag/USMC flag.sfa',
         'src/main/assets/USMC_flag')
+
+sceneform.asset('src/main/assets/obstacle/obstacle.obj',
+        'default',
+        'src/main/assets/obstacle/obstacle.sfa',
+        'src/main/assets/obstacle')

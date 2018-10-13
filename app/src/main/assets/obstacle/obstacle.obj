@@ -1,6 +1,6 @@
 # Object Export From Tinkercad Server 2015
 
-mtllib obj.mtl
+mtllib obstacle.mtl
 
 o obj_0
 v 16 		27 		41
