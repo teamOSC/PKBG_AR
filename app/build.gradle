@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
 
 android {
     compileSdkVersion 27
@@ -19,6 +21,21 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    signingConfigs {
+        debug {
+            try {
+                keyAlias 'androiddebugkey'
+                keyPassword 'android'
+                storeFile file('../debug.keystore')
+                storePassword 'android'
+            }
+            catch (ex) {
+                ex.printStackTrace();
+                throw new InvalidUserDataException("You should define DEBUG_KEYSTORE_PASSWORD and DEBUG_KEY_PASSWORD.")
+            }
+        }
     }
 }
 ext {
