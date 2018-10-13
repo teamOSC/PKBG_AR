@@ -9,6 +9,10 @@ public class Game {
   public GamePlayer player1;
   public GamePlayer player2;
 
+  //-1 not started, 0 = game running, 1 = game over
+  public int state = -1;
+  public String winnerId;
+
   public Game() {
 
   }

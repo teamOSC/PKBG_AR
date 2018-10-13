@@ -374,5 +374,9 @@ public class MainActivity extends AppCompatActivity {
         }
         currentHealth = player.health;
         tvHealth.setText(String.valueOf(player.health));
+
+        if (player.health <= 0) {
+
+        }
     }
 }

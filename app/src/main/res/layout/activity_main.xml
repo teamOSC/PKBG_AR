@@ -63,5 +63,12 @@
         android:id="@+id/tv_health"
         android:textColor="@android:color/white"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/game_status"
+        android:textSize="20sp"
+        android:layout_gravity="center"/>
+
 
 </FrameLayout>
