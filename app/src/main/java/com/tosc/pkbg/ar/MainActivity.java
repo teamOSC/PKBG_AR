@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference gameWorldObjectsRef;
 
     private Game game;
+    private MLKit mlKit;
     private String gameId;
 
     @Override
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         game = new Game();
+        mlKit = new MLKit(this);
         game.gameWorldObject = new ArrayList<>();
 
 
@@ -103,7 +105,17 @@ public class MainActivity extends AppCompatActivity {
         shootButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fragment.captureBitmap();
+                fragment.captureBitmap(null, true);
+            }
+        });
+
+        Button faceButton = findViewById(R.id.face_button);
+        faceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragment.captureBitmap(bitmap -> {
+                    mlKit.detectFace(bitmap);
+                }, false);
             }
         });
 
