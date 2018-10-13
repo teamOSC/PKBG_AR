@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -29,6 +30,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -52,19 +54,22 @@ public class MainActivity extends AppCompatActivity {
     private StorageManager storageManager;
 
     private DatabaseReference gameRef = FirebaseDatabase.getInstance().getReference("games");
-    private DatabaseReference gameWorldObjectsRef = gameRef.push();
+    private DatabaseReference gameWorldObjectsRef;
 
     private Game game;
     private MLKit mlKit;
+    private String gameId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         game = new Game();
         mlKit = new MLKit(this);
         game.gameWorldObject = new ArrayList<>();
+
 
         fragment = (CustomArFragment) getSupportFragmentManager().findFragmentById(R.id.sceneform_fragment);
         //To add
@@ -141,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void onResolveOkPressed(String dialogValue){
         int shortCode = Integer.parseInt(dialogValue);
+        setupNewGame(shortCode);
         storageManager.getCloudAnchorID(shortCode,(cloudAnchorId) -> {
             Anchor resolvedAnchor = fragment.getArSceneView().getSession().resolveCloudAnchor(cloudAnchorId);
             setCloudAnchor(resolvedAnchor);
@@ -182,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
                     storageManager.storeUsingShortCode(shortCode, cloudAnchor.getCloudAnchorId());
+                    setupNewGame(shortCode);
 
                     snackbarHelper.showMessageWithDismiss(this, "Anchor hosted! Cloud Short Code: " +
                             shortCode);
@@ -233,6 +240,12 @@ public class MainActivity extends AppCompatActivity {
             syncNewObject(anchorNode);
     }
 
+    private void setupNewGame(int shortCode) {
+        gameId = String.valueOf(shortCode);
+        game.id = gameId;
+        gameWorldObjectsRef = gameRef.child(gameId).child("objects");
+    }
+
     private void syncNewObject(AnchorNode anchorNode) {
         Vector3 position = anchorNode.getWorldPosition();
         Quaternion rotation = anchorNode.getWorldRotation();
@@ -246,6 +259,7 @@ public class MainActivity extends AppCompatActivity {
         gameWorldObjectsRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.e("LOOOL", "new object added");
                 GameWorldObject worldObject = dataSnapshot.getValue(GameWorldObject.class);
                 if (worldObject.addedByDeviceId.equals(getDeviceId())) {
                     return;
@@ -268,6 +282,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        gameWorldObjectsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    GameWorldObject worldObject = snapshot.getValue(GameWorldObject.class);
+                    Session session = fragment.getArSceneView().getSession();
+                    Anchor anchor =  session.createAnchor(new Pose(getArray(worldObject.position), getArray(worldObject.rotation)));
+                    placeObject(fragment, anchor, Uri.parse("Fox.sfb"), false);
+                }
             }
 
             @Override
