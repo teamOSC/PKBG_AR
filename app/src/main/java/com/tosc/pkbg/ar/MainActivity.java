@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference gameWorldObjectsRef = gameRef.push();
 
     private Game game;
+    private MLKit mlKit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         game = new Game();
+        mlKit = new MLKit(this);
         game.gameWorldObject = new ArrayList<>();
 
         fragment = (CustomArFragment) getSupportFragmentManager().findFragmentById(R.id.sceneform_fragment);
@@ -98,7 +100,17 @@ public class MainActivity extends AppCompatActivity {
         shootButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fragment.captureBitmap();
+                fragment.captureBitmap(null, true);
+            }
+        });
+
+        Button faceButton = findViewById(R.id.face_button);
+        faceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragment.captureBitmap(bitmap -> {
+                    mlKit.detectFace(bitmap);
+                }, false);
             }
         });
 
