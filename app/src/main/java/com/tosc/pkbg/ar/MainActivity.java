@@ -1,22 +1,15 @@
 package com.tosc.pkbg.ar;
 
 import android.app.AlertDialog;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.RectF;
 import android.net.Uri;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
@@ -41,16 +34,10 @@ import com.tosc.pkbg.ar.game.Game;
 import com.tosc.pkbg.ar.game.GameHit;
 import com.tosc.pkbg.ar.game.GamePlayer;
 import com.tosc.pkbg.ar.game.GameWorldObject;
-import com.tosc.pkbg.ar.ml.Classifier;
 import com.tosc.pkbg.ar.ml.MLKit;
 import com.tosc.pkbg.ar.ml.TFMobile;
-import com.tosc.pkbg.ar.ml.TensorFlowObjectDetectionAPIModel;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-
-import static com.tosc.pkbg.ar.ml.TFMobile.MINIMUM_CONFIDENCE_TF_OD_API;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -165,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                         appAnchorState = AppAnchorState.HOSTING;
                         snackbarHelper.showMessage(this, "Now hosting anchor...");
 
-                        placeObject(fragment, cloudAnchor, Uri.parse("USMC_flag.sfb"), false);
+                        placeObject(fragment, cloudAnchor, Uri.parse("Column.sfb"), false);
 
                         return;
                     }
@@ -187,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
         storageManager.getCloudAnchorID(shortCode,(cloudAnchorId) -> {
             Anchor resolvedAnchor = fragment.getArSceneView().getSession().resolveCloudAnchor(cloudAnchorId);
             setCloudAnchor(resolvedAnchor);
-            placeObject(fragment, cloudAnchor, Uri.parse("USMC_flag.sfb"), false);
+            placeObject(fragment, cloudAnchor, Uri.parse("Column.sfb"), false);
             snackbarHelper.showMessage(this, "Now Resolving Anchor...");
             appAnchorState = AppAnchorState.RESOLVING;
             addChildSyncing();

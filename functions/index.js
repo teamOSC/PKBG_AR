@@ -26,10 +26,10 @@ exports.checkAndUpdateHit = functions.database.ref('/games/{gameId}/hits/{hitsId
           hitTo = childKey
 
           if (hit.hitType === 0) {
-            health = health - 10;
+            health = health - 30;
           }
           if (hit.hitType === 1) {
-            health = health - 50;
+            health = health - 10;
           }
           if (health < 0) {
             health = 0

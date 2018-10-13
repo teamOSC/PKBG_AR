@@ -1,0 +1,12 @@
+# Blender MTL File: 'Column_Made_By_Tyro_Smith.blend'
+# Material Count: 1
+
+newmtl Material.001
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd C:\\Users\\Elijah\\3d Models I Made\\Textures\\WhiteMarble1.jpg
