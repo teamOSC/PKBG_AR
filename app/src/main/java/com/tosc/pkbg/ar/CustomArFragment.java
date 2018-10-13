@@ -1,6 +1,7 @@
 package com.tosc.pkbg.ar;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.view.PixelCopy;
@@ -51,7 +52,10 @@ public class CustomArFragment extends ArFragment {
                         }
                     }
                     else if (obcl != null) {
-                        obcl.onBitmapCaptured(bitmap);
+
+                        obcl.onBitmapCaptured(Bitmap.createScaledBitmap(bitmap, 300, 300, false));
+
+//                        obcl.onBitmapCaptured(bitmap);
                     }
                 } else {
                     Toast toast = Toast.makeText(getActivity(),

@@ -1,15 +1,25 @@
 package com.tosc.pkbg.ar;
 
 import android.app.AlertDialog;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
@@ -31,7 +41,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -66,11 +79,34 @@ public class MainActivity extends AppCompatActivity {
     private View btnShoot;
     private int currentHealth = -1;
 
+    private static final int TF_OD_API_INPUT_SIZE = 300;
+    private static final String TF_OD_API_MODEL_FILE =
+            "file:///android_asset/ssd_mobilenet_v1_android_export.pb";
+    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/coco_labels_list.txt";
+
+    private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.6f;
+    private static final float MINIMUM_CONFIDENCE_MULTIBOX = 0.1f;
+    private static final float MINIMUM_CONFIDENCE_YOLO = 0.25f;
+
+    private Classifier detector;
+
+    private Bitmap rgbFrameBitmap = null;
+    private Bitmap croppedBitmap = null;
+    private Bitmap cropCopyBitmap = null;
+
+    protected int previewWidth = 0;
+    protected int previewHeight = 0;
+    int cropSize = TF_OD_API_INPUT_SIZE;
+
+    private Matrix frameToCropTransform;
+    private Matrix cropToFrameTransform;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initClassifier();
         tvHealth = findViewById(R.id.tv_health);
         tvGameStatus = findViewById(R.id.game_status);
 
@@ -114,8 +150,10 @@ public class MainActivity extends AppCompatActivity {
         btnShoot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fragment.captureBitmap(null, true);
-                onHitAttempted();
+                fragment.captureBitmap(bitmap -> {
+                    mlKit.detectFace(bitmap);
+                    detectImage(bitmap);
+                }, false);
             }
         });
 
@@ -124,7 +162,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 fragment.captureBitmap(bitmap -> {
-                    mlKit.detectFace(bitmap);
+//                    mlKit.detectFace(bitmap);
+                    detectImage(bitmap);
                 }, false);
             }
         });
@@ -154,6 +193,66 @@ public class MainActivity extends AppCompatActivity {
         storageManager = new StorageManager(this);
     }
 
+    private void initClassifier() {
+
+        try {
+            detector = TensorFlowObjectDetectionAPIModel.create(
+                    getAssets(), TF_OD_API_MODEL_FILE, TF_OD_API_LABELS_FILE, TF_OD_API_INPUT_SIZE);
+        } catch (final IOException e) {
+            Log.e("lol", "Exception initializing classifier!");
+            Toast toast =
+                    Toast.makeText(
+                            getApplicationContext(), "Classifier could not be initialized", Toast.LENGTH_SHORT);
+            toast.show();
+            finish();
+        }
+    }
+
+    private void detectImage(Bitmap bitmap) {
+
+        previewWidth = bitmap.getWidth();
+        previewHeight = bitmap.getHeight();
+
+        frameToCropTransform =
+                Utils.getTransformationMatrix(
+                        previewWidth, previewHeight,
+                        cropSize, cropSize,
+                        0, false);
+
+        cropToFrameTransform = new Matrix();
+        frameToCropTransform.invert(cropToFrameTransform);
+
+        rgbFrameBitmap = Bitmap.createBitmap(previewWidth, previewHeight, Bitmap.Config.ARGB_8888);
+        croppedBitmap = Bitmap.createBitmap(cropSize, cropSize, Bitmap.Config.ARGB_8888);
+
+        final Canvas canvass = new Canvas(croppedBitmap);
+        canvass.drawBitmap(rgbFrameBitmap, frameToCropTransform, null);
+
+
+        final List<Classifier.Recognition> results = detector.recognizeImage(bitmap);
+
+        float minimumConfidence = MINIMUM_CONFIDENCE_TF_OD_API;
+
+        boolean isHit = false;
+        for (final Classifier.Recognition result : results) {
+            final RectF location = result.getLocation();
+            if (location != null && result.getConfidence() >= minimumConfidence) {
+                Log.e("lol", "found " + result.getTitle());
+                Log.e("lol", "x "+ location.left);
+                Log.e("lol", "y "+ location.top);
+                if (result.getTitle().equals("person")) {
+                    if (isRectInCrosshair(location)) {
+                        isHit = true;
+                        onHitAttempted(true);
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!isHit) onHitAttempted(false);
+    }
+
     private void onResolveOkPressed(String dialogValue){
         int shortCode = Integer.parseInt(dialogValue);
         setupNewGame(shortCode);
@@ -165,6 +264,17 @@ public class MainActivity extends AppCompatActivity {
             appAnchorState = AppAnchorState.RESOLVING;
             addChildSyncing();
         });
+    }
+
+    private boolean isRectInCrosshair(RectF location) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+
+        height = 300;
+        width = 300;
+        return location.contains(width /2, height / 2);
     }
 
     private void setCloudAnchor (Anchor newAnchor){
@@ -384,9 +494,8 @@ public class MainActivity extends AppCompatActivity {
                 Settings.Secure.ANDROID_ID).substring(0, 5);
     }
 
-    private void onHitAttempted() {
+    private void onHitAttempted(boolean isHit) {
         Utils.playFireSound(this);
-        boolean isHit = true;
         if (isHit) {
             GameHit hit = new GameHit(getDeviceId(), 1);
             gameHitsRef.push().setValue(hit);
