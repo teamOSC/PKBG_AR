@@ -23,17 +23,16 @@ public class CustomArFragment extends ArFragment {
         return config;
     }
 
-    public Bitmap getBitmap() {
+    interface OnBitmapCapturedListener {
+        void onBitmapCaptured(Bitmap bitmap);
+    }
+
+    public void captureBitmap(OnBitmapCapturedListener obcl, boolean save) {
         ArSceneView view = getArSceneView();
 
         // Create a bitmap the size of the scene view.
-        return Bitmap.createBitmap(view.getWidth(), view.getHeight(),
+        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(),
                 Bitmap.Config.ARGB_8888);
-    }
-
-    public void captureBitmap() {
-        ArSceneView view = getArSceneView();
-        Bitmap bitmap = getBitmap();
         // Create a handler thread to offload the processing of the image.
         final HandlerThread handlerThread = new HandlerThread("PixelCopier");
         handlerThread.start();
@@ -42,12 +41,17 @@ public class CustomArFragment extends ArFragment {
             @Override
             public void onPixelCopyFinished(int copyResult) {
                 if (copyResult == PixelCopy.SUCCESS) {
-                    try {
-                        Utils.saveImage(getActivity(), bitmap);
-                    } catch (IOException e) {
-                        Toast.makeText(getActivity(), e.toString(),
-                                Toast.LENGTH_LONG).show();
-                        return;
+                    if (save) {
+                        try {
+                            Utils.saveImage(getActivity(), bitmap);
+                        } catch (IOException e) {
+                            Toast.makeText(getActivity(), e.toString(),
+                                    Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    }
+                    else if (obcl != null) {
+                        obcl.onBitmapCaptured(bitmap);
                     }
                 } else {
                     Toast toast = Toast.makeText(getActivity(),
