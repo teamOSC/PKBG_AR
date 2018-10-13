@@ -64,3 +64,8 @@ sceneform.asset('src/main/assets/obstacle/obstacle.obj',
         'default',
         'src/main/assets/obstacle/obstacle.sfa',
         'src/main/assets/obstacle')
+
+sceneform.asset('src/main/assets/Column/Column_Made_By_Tyro_Smith.obj',
+        'default',
+        'src/main/assets/Column/Column_Made_By_Tyro_Smith.sfa',
+        'src/main/assets/Column_Made_By_Tyro_Smith')

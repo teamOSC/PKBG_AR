@@ -1,0 +1,41 @@
+{
+   materials: [
+      {
+         name: "Material.001",
+         parameters: [
+            {
+               baseColor: null,
+            },
+            {
+               baseColorTint: [
+                  1,
+                  1,
+                  1,
+                  1,
+               ],
+            },
+            {
+               metallic: 1,
+            },
+            {
+               roughness: 0.14280000000000001,
+            },
+            {
+               opacity: null,
+            },
+         ],
+         source: "build/sceneform_sdk/default_materials/obj_material.sfm",
+      },
+   ],
+   model: {
+      attributes: [
+         "Position",
+         "Orientation",
+      ],
+      collision: {},
+      file: "src/main/assets/Column/Column_Made_By_Tyro_Smith.obj",
+      name: "Column_Made_By_Tyro_Smith",
+      scale: 0.29411799999999999,
+   },
+   version: "0.51:1",
+}
