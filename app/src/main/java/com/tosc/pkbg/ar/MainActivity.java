@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                         appAnchorState = AppAnchorState.HOSTING;
                         snackbarHelper.showMessage(this, "Now hosting anchor...");
 
-                        placeObject(fragment, cloudAnchor, Uri.parse("Column.sfb"), false);
+                        placeObject(fragment, cloudAnchor, Uri.parse("CUSMC_flag.sfb"), false);
 
                         return;
                     }
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
         storageManager.getCloudAnchorID(shortCode,(cloudAnchorId) -> {
             Anchor resolvedAnchor = fragment.getArSceneView().getSession().resolveCloudAnchor(cloudAnchorId);
             setCloudAnchor(resolvedAnchor);
-            placeObject(fragment, cloudAnchor, Uri.parse("Column.sfb"), false);
+            placeObject(fragment, cloudAnchor, Uri.parse("USMC_flag.sfb"), false);
             snackbarHelper.showMessage(this, "Now Resolving Anchor...");
             appAnchorState = AppAnchorState.RESOLVING;
             addChildSyncing();

@@ -55,17 +55,9 @@ sceneform.asset('src/main/assets/crate/Crate1.obj',
         'src/main/assets/crate/Crate1.sfa',
         'src/main/assets/Crate1')
 
+
+
 sceneform.asset('src/main/assets/flag/USMC flag.obj',
         'default',
         'src/main/assets/flag/USMC flag.sfa',
         'src/main/assets/USMC_flag')
-
-sceneform.asset('src/main/assets/obstacle/obstacle.obj',
-        'default',
-        'src/main/assets/obstacle/obstacle.sfa',
-        'src/main/assets/obstacle')
-
-sceneform.asset('src/main/assets/Column/Column_Made_By_Tyro_Smith.obj',
-        'default',
-        'src/main/assets/Column/Column_Made_By_Tyro_Smith.sfa',
-        'src/main/assets/Column_Made_By_Tyro_Smith')
