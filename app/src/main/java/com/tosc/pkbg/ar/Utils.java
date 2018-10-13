@@ -51,6 +51,18 @@ public class Utils {
         mPlayer.start();
     }
 
+    static void playHeadshotSound(Context context) {
+        MediaPlayer mPlayer;
+        mPlayer = MediaPlayer.create(context, R.raw.headshot);
+        mPlayer.start();
+    }
+
+    static void playReloadSound(Context context) {
+        MediaPlayer mPlayer;
+        mPlayer = MediaPlayer.create(context, R.raw.reload);
+        mPlayer.start();
+    }
+
     public static Matrix getTransformationMatrix(
             final int srcWidth,
             final int srcHeight,

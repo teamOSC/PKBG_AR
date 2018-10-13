@@ -2,7 +2,10 @@ package com.tosc.pkbg.ar;
 
 import android.app.AlertDialog;
 import android.net.Uri;
+import android.os.Handler;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -73,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
     private View btnShoot;
     private int currentHealth = -1;
 
+    private boolean isReloading = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,6 +127,8 @@ public class MainActivity extends AppCompatActivity {
         btnShoot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (isReloading) return;
+
                 fragment.captureBitmap(bitmap -> {
                     mlKit.detectFace(bitmap, () -> {
                         onHitAttempted(true, GameHit.HIT_HEAD);
@@ -392,7 +399,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onHitAttempted(boolean isHit, int hitType) {
-        Utils.playFireSound(this);
+        isReloading = true;
+        if (hitType == GameHit.HIT_HEAD && isHit) {
+            Utils.playHeadshotSound(this);
+        } else  {
+            Utils.playFireSound(this);
+        }
+
+
+        new Handler().postDelayed(() -> {
+            runOnUiThread(() -> {
+                Utils.playReloadSound(this);
+                isReloading = false;
+            });
+
+        }, 1000);
+
         if (isHit) {
             GameHit hit = new GameHit(getDeviceId(), hitType);
             gameHitsRef.push().setValue(hit);
