@@ -38,6 +38,9 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation "com.google.ar.sceneform.ux:sceneform-ux:1.5.0"
 
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
+
+
     implementation 'org.tensorflow:tensorflow-android:1.11.0'
 }
 
