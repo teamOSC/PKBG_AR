@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private String gameId;
 
     private TextView tvHealth;
+    private int currentHealth = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -357,6 +358,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onHitAttempted() {
+        Utils.playFireSound(this);
         boolean isHit = true;
         if (isHit) {
             GameHit hit = new GameHit(getDeviceId(), 0);
@@ -365,6 +367,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateGameState(GamePlayer player) {
+        if (currentHealth != -1) {
+            if (player.health < currentHealth) {
+                Utils.playHitSound(this);
+            }
+        }
+        currentHealth = player.health;
         tvHealth.setText(String.valueOf(player.health));
     }
 }

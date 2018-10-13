@@ -47,7 +47,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="60dp"
+        android:textSize="25sp"
         android:id="@+id/tv_health"
         android:textColor="@android:color/white"/>
 
