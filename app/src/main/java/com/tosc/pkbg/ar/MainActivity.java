@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                         appAnchorState = AppAnchorState.HOSTING;
                         snackbarHelper.showMessage(this, "Now hosting anchor...");
 
-                        placeObject(fragment, cloudAnchor, Uri.parse("CUSMC_flag.sfb"), false);
+                        placeObject(fragment, cloudAnchor, Uri.parse("USMC_flag.sfb"), false);
 
                         return;
                     }
