@@ -1,12 +1,10 @@
 package com.tosc.pkbg.ar;
 
 import android.app.AlertDialog;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -119,12 +117,12 @@ public class MainActivity extends AppCompatActivity {
                         appAnchorState = AppAnchorState.HOSTING;
                         snackbarHelper.showMessage(this, "Now hosting anchor...");
 
-                        placeObject(fragment, cloudAnchor, Uri.parse("Fox.sfb"), false);
+                        placeObject(fragment, cloudAnchor, Uri.parse("USMC_flag.sfb"), false);
 
                         return;
                     }
 
-                    placeObject(fragment, localAnchor, Uri.parse("Fox.sfb"), true);
+                    placeObject(fragment, localAnchor, Uri.parse("Crate1.sfb"), true);
 
                 }
         );
@@ -138,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         storageManager.getCloudAnchorID(shortCode,(cloudAnchorId) -> {
             Anchor resolvedAnchor = fragment.getArSceneView().getSession().resolveCloudAnchor(cloudAnchorId);
             setCloudAnchor(resolvedAnchor);
-            placeObject(fragment, cloudAnchor, Uri.parse("Fox.sfb"), false);
+            placeObject(fragment, cloudAnchor, Uri.parse("USMC_flag.sfb"), false);
             snackbarHelper.showMessage(this, "Now Resolving Anchor...");
             appAnchorState = AppAnchorState.RESOLVING;
             addChildSyncing();
@@ -203,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void placeObject(ArFragment fragment, Anchor anchor, Uri model, boolean shouldSync) {
+
         ModelRenderable.builder()
                 .setSource(fragment.getContext(), model)
                 .build()
@@ -247,14 +246,17 @@ public class MainActivity extends AppCompatActivity {
         gameWorldObjectsRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.e("LOOOL", "new object added");
-                GameWorldObject worldObject = dataSnapshot.getValue(GameWorldObject.class);
-                if (worldObject.addedByDeviceId.equals(getDeviceId())) {
-                    return;
+                try {
+                    GameWorldObject worldObject = dataSnapshot.getValue(GameWorldObject.class);
+                    if (worldObject.addedByDeviceId.equals(getDeviceId())) {
+                        return;
+                    }
+                    Session session = fragment.getArSceneView().getSession();
+                    Anchor anchor = session.createAnchor(new Pose(getArray(worldObject.position), getArray(worldObject.rotation)));
+                    placeObject(fragment, anchor, Uri.parse("Crate1.sfb"), false);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                Session session = fragment.getArSceneView().getSession();
-                Anchor anchor =  session.createAnchor(new Pose(getArray(worldObject.position), getArray(worldObject.rotation)));
-                placeObject(fragment, anchor, Uri.parse("Fox.sfb"), false);
             }
 
             @Override
@@ -281,10 +283,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    GameWorldObject worldObject = snapshot.getValue(GameWorldObject.class);
-                    Session session = fragment.getArSceneView().getSession();
-                    Anchor anchor =  session.createAnchor(new Pose(getArray(worldObject.position), getArray(worldObject.rotation)));
-                    placeObject(fragment, anchor, Uri.parse("Fox.sfb"), false);
+                    try {
+                        GameWorldObject worldObject = snapshot.getValue(GameWorldObject.class);
+                        Session session = fragment.getArSceneView().getSession();
+                        Anchor anchor = session.createAnchor(new Pose(getArray(worldObject.position), getArray(worldObject.rotation)));
+                        placeObject(fragment, anchor, Uri.parse("Crate1.sfb"), false);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 

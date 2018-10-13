@@ -41,3 +41,14 @@ sceneform.asset('sampledata/ArcticFox_Posed.obj',
         'sampledata/ArcticFox_Posed.sfa',
         'src/main/assets/Fox')
 apply plugin: 'com.google.gms.google-services'
+
+
+sceneform.asset('src/main/assets/crate/Crate1.obj',
+        'default',
+        'src/main/assets/crate/Crate1.sfa',
+        'src/main/assets/Crate1')
+
+sceneform.asset('src/main/assets/flag/USMC flag.obj',
+        'default',
+        'src/main/assets/flag/USMC flag.sfa',
+        'src/main/assets/USMC_flag')

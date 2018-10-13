@@ -1,0 +1,42 @@
+{
+   materials: [
+      {
+         name: "wire_088144225",
+         parameters: [
+            {
+               baseColor: null,
+            },
+            {
+               baseColorTint: [
+                  0.34510000000000002,
+                  0.56469999999999998,
+                  0.88239999999999996,
+                  1,
+               ],
+            },
+            {
+               metallic: 1,
+            },
+            {
+               roughness: 0.242536,
+            },
+            {
+               opacity: null,
+            },
+         ],
+         source: "build/sceneform_sdk/default_materials/obj_material.sfm",
+      },
+   ],
+   model: {
+      attributes: [
+         "Position",
+         "TexCoord",
+         "Orientation",
+      ],
+      collision: {},
+      file: "src/main/assets/flag/USMC flag.obj",
+      name: "USMC flag",
+      scale: 0.0089443999999999999,
+   },
+   version: "0.51:1",
+}
