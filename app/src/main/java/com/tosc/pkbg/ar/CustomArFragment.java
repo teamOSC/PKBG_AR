@@ -32,7 +32,7 @@ public class CustomArFragment extends ArFragment {
         ArSceneView view = getArSceneView();
 
         // Create a bitmap the size of the scene view.
-        Bitmap bitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(),
+        Bitmap bitmap = Bitmap.createBitmap(300, 600,
                 Bitmap.Config.ARGB_8888);
         // Create a handler thread to offload the processing of the image.
         final HandlerThread handlerThread = new HandlerThread("PixelCopier");
@@ -42,9 +42,10 @@ public class CustomArFragment extends ArFragment {
             @Override
             public void onPixelCopyFinished(int copyResult) {
                 if (copyResult == PixelCopy.SUCCESS) {
+
                     if (save) {
                         try {
-                            Utils.saveImage(getActivity(), bitmap);
+                            Utils.saveImage(getActivity(),Bitmap.createBitmap(bitmap, 0, 150, 300, 300));
                         } catch (IOException e) {
                             Toast.makeText(getActivity(), e.toString(),
                                     Toast.LENGTH_LONG).show();
@@ -53,7 +54,7 @@ public class CustomArFragment extends ArFragment {
                     }
                     else if (obcl != null) {
 
-                        obcl.onBitmapCaptured(Bitmap.createScaledBitmap(bitmap, 300, 300, false));
+                        obcl.onBitmapCaptured(Bitmap.createBitmap(bitmap, 0, 150, 300, 300));
 
 //                        obcl.onBitmapCaptured(bitmap);
                     }
