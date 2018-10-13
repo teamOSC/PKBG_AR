@@ -36,6 +36,11 @@
       collision: {},
       file: "src/main/assets/crate/Crate1.obj",
       name: "Crate1",
+      recenter: {
+        x: 0.5,
+        y: 0.5,
+        z: 0
+      },
       scale: 0.3,
    },
    samplers: [
