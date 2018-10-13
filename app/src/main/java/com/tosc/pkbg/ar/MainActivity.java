@@ -62,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
     private String gameId;
 
     private TextView tvHealth;
+    private TextView tvGameStatus;
+    private View btnShoot;
     private int currentHealth = -1;
 
     @Override
@@ -70,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         tvHealth = findViewById(R.id.tv_health);
+        tvGameStatus = findViewById(R.id.game_status);
 
         game = new Game();
         mlKit = new MLKit(this);
@@ -106,7 +109,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         FrameLayout mainLayout = findViewById(R.id.layout_main);
-        findViewById(R.id.shoot_button).setOnClickListener(new View.OnClickListener() {
+
+        btnShoot = findViewById(R.id.shoot_button);
+        btnShoot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 fragment.captureBitmap(null, true);
@@ -257,12 +262,35 @@ public class MainActivity extends AppCompatActivity {
         player.playerId = getDeviceId();
         player.health = 100;
 
+        gameRef.child(gameId).child("winnerId").setValue("");
+
         gamePlayersRef.child(getDeviceId()).setValue(player);
 
         gamePlayersRef.child(getDeviceId()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 updateGameState(dataSnapshot.getValue(GamePlayer.class));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        gameRef.child(gameId).child("winnerId").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String winnerId = dataSnapshot.getValue(String.class);
+                if (winnerId == null || winnerId.equals("") || winnerId.equals(" ")) return;
+                btnShoot.setVisibility(View.GONE);
+                tvGameStatus.setVisibility(View.VISIBLE);
+                findViewById(R.id.iv_crosshair).setVisibility(View.GONE);
+                if (winnerId.equals(getDeviceId())) {
+                    tvGameStatus.setText("WINNER WINNER CHICKEN DINNER");
+                } else  {
+                    tvGameStatus.setText("LOST!");
+                }
             }
 
             @Override
@@ -360,7 +388,7 @@ public class MainActivity extends AppCompatActivity {
         Utils.playFireSound(this);
         boolean isHit = true;
         if (isHit) {
-            GameHit hit = new GameHit(getDeviceId(), 0);
+            GameHit hit = new GameHit(getDeviceId(), 1);
             gameHitsRef.push().setValue(hit);
         }
     }
@@ -374,9 +402,5 @@ public class MainActivity extends AppCompatActivity {
         }
         currentHealth = player.health;
         tvHealth.setText(String.valueOf(player.health));
-
-        if (player.health <= 0) {
-
-        }
     }
 }

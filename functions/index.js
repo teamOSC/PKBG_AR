@@ -34,7 +34,12 @@ exports.checkAndUpdateHit = functions.database.ref('/games/{gameId}/hits/{hitsId
           if (health < 0) {
             health = 0
           }
+
           snapshot.ref.parent.child('players').child(hitTo).child('health').set(health)
+
+          if (health === 0) {
+            snapshot.ref.parent.child('winnerId').set(hit.hitBy);
+          }
         }
 
       });

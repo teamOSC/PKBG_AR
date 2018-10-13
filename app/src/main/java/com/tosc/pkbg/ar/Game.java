@@ -11,7 +11,7 @@ public class Game {
 
   //-1 not started, 0 = game running, 1 = game over
   public int state = -1;
-  public String winnerId;
+  public String winnerId = "";
 
   public Game() {
 

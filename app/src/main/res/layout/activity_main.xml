@@ -44,7 +44,8 @@
         android:layout_height="40dp"
         android:src="@drawable/crosshair"
         android:layout_gravity="center"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop"
+        android:id="@+id/iv_crosshair"/>
 
     <ImageView
         android:layout_width="150dp"
@@ -60,6 +61,7 @@
         android:layout_gravity="top|right"
         android:layout_marginBottom="60dp"
         android:textSize="30sp"
+        android:layout_marginRight="10dp"
         android:id="@+id/tv_health"
         android:textColor="@android:color/white"/>
 
@@ -67,8 +69,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/game_status"
-        android:textSize="20sp"
-        android:layout_gravity="center"/>
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="#808000"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_margin="15dp"/>
 
 
 </FrameLayout>
