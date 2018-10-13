@@ -2,6 +2,7 @@ package com.tosc.pkbg.ar;
 
 import android.app.AlertDialog;
 import android.net.Uri;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -26,7 +27,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -162,6 +162,8 @@ public class MainActivity extends AppCompatActivity {
 
                     snackbarHelper.showMessageWithDismiss(this, "Anchor hosted! Cloud Short Code: " +
                             shortCode);
+
+                    addChildSyncing();
                 });
 
                 appAnchorState = AppAnchorState.HOSTED;
@@ -212,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
         Vector3 position = anchorNode.getWorldPosition();
         Quaternion rotation = anchorNode.getWorldRotation();
         DatabaseReference newObjectRef = gameWorldObjectsRef.push();
-        GameWorldObject worldObject = new GameWorldObject(position, rotation, newObjectRef.getKey());
+        GameWorldObject worldObject = new GameWorldObject(position, rotation, newObjectRef.getKey(),getDeviceId());
         game.gameWorldObject.add(worldObject);
         newObjectRef.setValue(worldObject);
     }
@@ -222,6 +224,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 GameWorldObject worldObject = dataSnapshot.getValue(GameWorldObject.class);
+                if (worldObject.addedByDeviceId.equals(getDeviceId())) {
+                    return;
+                }
                 Session session = fragment.getArSceneView().getSession();
                 Anchor anchor =  session.createAnchor(new Pose(getArray(worldObject.position), getArray(worldObject.rotation)));
                 placeObject(fragment, anchor, Uri.parse("Fox.sfb"), false);
@@ -258,5 +263,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return floatArray;
+    }
+
+    private String getDeviceId() {
+        return Settings.Secure.getString(this.getContentResolver(),
+                Settings.Secure.ANDROID_ID).substring(0, 5);
     }
 }
