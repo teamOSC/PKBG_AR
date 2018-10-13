@@ -8,4 +8,5 @@
 .DS_Store
 /build
 /captures
+/functions/node_modules
 .externalNativeBuild

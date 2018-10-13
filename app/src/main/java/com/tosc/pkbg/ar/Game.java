@@ -6,6 +6,9 @@ public class Game {
 
   public String id;
 
+  public GamePlayer player1;
+  public GamePlayer player2;
+
   public Game() {
 
   }

@@ -43,5 +43,13 @@
 
     </LinearLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="15dp"
+        android:id="@+id/tv_health"
+        android:textColor="@android:color/white"/>
+
 
 </FrameLayout>

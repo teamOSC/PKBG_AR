@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.util.Log;
 
 import java.io.File;
@@ -48,4 +49,5 @@ public class Utils {
         mPlayer = MediaPlayer.create(context, R.raw.hit_sound);
         mPlayer.start();
     }
+
 }

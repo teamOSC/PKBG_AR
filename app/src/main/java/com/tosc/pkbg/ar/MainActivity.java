@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
@@ -53,16 +54,21 @@ public class MainActivity extends AppCompatActivity {
 
     private DatabaseReference gameRef = FirebaseDatabase.getInstance().getReference("games");
     private DatabaseReference gameWorldObjectsRef;
+    private DatabaseReference gamePlayersRef;
+    private DatabaseReference gameHitsRef;
 
     private Game game;
     private MLKit mlKit;
     private String gameId;
+
+    private TextView tvHealth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        tvHealth = findViewById(R.id.tv_health);
 
         game = new Game();
         mlKit = new MLKit(this);
@@ -104,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 fragment.captureBitmap(null, true);
+                onHitAttempted();
             }
         });
 
@@ -243,6 +250,26 @@ public class MainActivity extends AppCompatActivity {
         gameId = String.valueOf(shortCode);
         game.id = gameId;
         gameWorldObjectsRef = gameRef.child(gameId).child("objects");
+        gamePlayersRef = gameRef.child(gameId).child("players");
+        gameHitsRef = gameRef.child(gameId).child("hits");
+
+        GamePlayer player = new GamePlayer();
+        player.playerId = getDeviceId();
+        player.health = 100;
+
+        gamePlayersRef.child(getDeviceId()).setValue(player);
+
+        gamePlayersRef.child(getDeviceId()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                updateGameState(dataSnapshot.getValue(GamePlayer.class));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void syncNewObject(AnchorNode anchorNode) {
@@ -327,5 +354,17 @@ public class MainActivity extends AppCompatActivity {
     private String getDeviceId() {
         return Settings.Secure.getString(this.getContentResolver(),
                 Settings.Secure.ANDROID_ID).substring(0, 5);
+    }
+
+    private void onHitAttempted() {
+        boolean isHit = true;
+        if (isHit) {
+            GameHit hit = new GameHit(getDeviceId(), 0);
+            gameHitsRef.push().setValue(hit);
+        }
+    }
+
+    private void updateGameState(GamePlayer player) {
+        tvHealth.setText(String.valueOf(player.health));
     }
 }
