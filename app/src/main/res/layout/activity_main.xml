@@ -30,13 +30,6 @@
             android:layout_height="wrap_content"
             android:text="Join game"/>
 
-        <Button
-            android:id="@+id/face_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Face"
-            android:visibility="gone"/>
-
     </LinearLayout>
 
     <ImageView

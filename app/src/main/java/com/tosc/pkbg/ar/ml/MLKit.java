@@ -24,8 +24,10 @@ public class MLKit {
     public MLKit(Context context) {
         this.context = context;
     }
-
-    public void detectFace (Bitmap bitmap) {
+    public interface OnHitDetectListener {
+        void onHitDetected();
+    }
+    public void detectFace (Bitmap bitmap, OnHitDetectListener ohdl) {
         FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
 
         FirebaseVisionFaceDetector detector = FirebaseVision.getInstance()
@@ -37,7 +39,11 @@ public class MLKit {
                     public void onSuccess(List<FirebaseVisionFace> firebaseVisionFaces) {
                         Log.w("FACE", "SUCCESS " + firebaseVisionFaces.size());
                         firebaseVisionFaces.forEach(face -> {
-                            Log.d("FACE", face.getBoundingBox().toString());
+                            if(face.getBoundingBox().contains(150, 150)) {
+                                if (ohdl != null) {
+                                    ohdl.onHitDetected();
+                                }
+                            }
                         });
                     }
                 })
