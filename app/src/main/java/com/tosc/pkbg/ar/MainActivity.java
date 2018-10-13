@@ -106,8 +106,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         FrameLayout mainLayout = findViewById(R.id.layout_main);
-        Button shootButton = findViewById(R.id.shoot_button);
-        shootButton.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.shoot_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 fragment.captureBitmap(null, true);
@@ -370,6 +369,7 @@ public class MainActivity extends AppCompatActivity {
         if (currentHealth != -1) {
             if (player.health < currentHealth) {
                 Utils.playHitSound(this);
+                Utils.vibrate(this);
             }
         }
         currentHealth = player.health;

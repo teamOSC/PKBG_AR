@@ -21,34 +21,45 @@
             android:id="@+id/clear_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Clear"/>
+            android:text="Clear"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/resolve_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Resolve"/>
-
-        <Button
-            android:id="@+id/shoot_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Shoot"/>
+            android:text="Join game"/>
 
         <Button
             android:id="@+id/face_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Face"/>
+            android:text="Face"
+            android:visibility="gone"/>
 
     </LinearLayout>
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/crosshair"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"/>
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/shoot"
+        android:layout_gravity="bottom|center_horizontal"
+        android:id="@+id/shoot_button"
+        android:scaleType="centerInside"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
+        android:layout_gravity="top|right"
         android:layout_marginBottom="60dp"
-        android:textSize="25sp"
+        android:textSize="30sp"
         android:id="@+id/tv_health"
         android:textColor="@android:color/white"/>
 
