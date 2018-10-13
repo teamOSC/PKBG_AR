@@ -1,4 +1,4 @@
-package com.tosc.pkbg.ar;
+package com.tosc.pkbg.ar.game;
 
 public class GamePlayer {
 

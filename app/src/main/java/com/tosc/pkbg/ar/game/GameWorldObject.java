@@ -1,4 +1,4 @@
-package com.tosc.pkbg.ar;
+package com.tosc.pkbg.ar.game;
 
 import com.google.ar.sceneform.math.Quaternion;
 import com.google.ar.sceneform.math.Vector3;

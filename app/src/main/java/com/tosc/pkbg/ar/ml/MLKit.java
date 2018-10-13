@@ -1,4 +1,4 @@
-package com.tosc.pkbg.ar;
+package com.tosc.pkbg.ar.ml;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -25,7 +25,7 @@ public class MLKit {
         this.context = context;
     }
 
-    void detectFace (Bitmap bitmap) {
+    public void detectFace (Bitmap bitmap) {
         FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
 
         FirebaseVisionFaceDetector detector = FirebaseVision.getInstance()
