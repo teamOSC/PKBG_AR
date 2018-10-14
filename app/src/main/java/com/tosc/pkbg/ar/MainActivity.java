@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
 
-                    placeObject(fragment, localAnchor, Uri.parse("Crate1.sfb"), true);
+                    placeObject(fragment, localAnchor, Uri.parse("Pillar.sfb"), true);
 
                 }
         );
@@ -204,6 +204,7 @@ public class MainActivity extends AppCompatActivity {
         winnerIdRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                gamePlayersRef.child(getDeviceId()).child("health").setValue(100);
                 if (dataSnapshot.getValue(String.class).equals("reset")) {
                     gameRef.child(gameId).child("winnerId").setValue("");
                 } else {
@@ -398,7 +399,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     Session session = fragment.getArSceneView().getSession();
                     Anchor anchor = session.createAnchor(new Pose(getArray(worldObject.position), getArray(worldObject.rotation)));
-                    placeObject(fragment, anchor, Uri.parse("Crate1.sfb"), false);
+                    placeObject(fragment, anchor, Uri.parse("Pillar.sfb"), false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -432,7 +433,7 @@ public class MainActivity extends AppCompatActivity {
                         GameWorldObject worldObject = snapshot.getValue(GameWorldObject.class);
                         Session session = fragment.getArSceneView().getSession();
                         Anchor anchor = session.createAnchor(new Pose(getArray(worldObject.position), getArray(worldObject.rotation)));
-                        placeObject(fragment, anchor, Uri.parse("Crate1.sfb"), false);
+                        placeObject(fragment, anchor, Uri.parse("Pillar.sfb"), false);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

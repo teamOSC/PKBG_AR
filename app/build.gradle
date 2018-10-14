@@ -81,3 +81,8 @@ sceneform.asset('src/main/assets/flag/USMC flag.obj',
         'default',
         'src/main/assets/flag/USMC flag.sfa',
         'src/main/assets/USMC_flag')
+
+sceneform.asset('src/main/assets/pillar/Pillar.fbx',
+        'default',
+        'src/main/assets/pillar/Pillar.sfa',
+        'src/main/assets/Pillar')
