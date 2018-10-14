@@ -1,17 +1,21 @@
 package com.tosc.pkbg.ar;
 
 import android.app.AlertDialog;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.ar.core.Anchor;
@@ -73,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView tvHealth;
     private TextView tvGameStatus;
+    private ProgressBar healthProgress;
     private View btnShoot;
     private int currentHealth = -1;
 
@@ -85,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
         tvHealth = findViewById(R.id.tv_health);
         tvGameStatus = findViewById(R.id.game_status);
+        healthProgress = findViewById(R.id.healthProgress);
 
         game = new Game();
         mlKit = new MLKit(this);
@@ -430,5 +436,26 @@ public class MainActivity extends AppCompatActivity {
         }
         currentHealth = player.health;
         tvHealth.setText(String.valueOf(player.health));
+
+        healthProgress.setProgress(currentHealth);
+
+        if (currentHealth <= 30) {
+            setHealthProgressColor(Color.RED);
+        }
+
+        if (currentHealth > 30 && currentHealth <= 70) {
+            setHealthProgressColor(Color.YELLOW);
+        }
+
+        if (currentHealth > 70) {
+            setHealthProgressColor(Color.GREEN);
+        }
+    }
+
+    private void setHealthProgressColor(int color) {
+        healthProgress.setVisibility(View.VISIBLE);
+        color =  ColorUtils.setAlphaComponent(color, 60);
+        healthProgress.setProgressTintList(ColorStateList.valueOf(color));
+
     }
 }

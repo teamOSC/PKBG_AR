@@ -7,11 +7,23 @@
     android:id="@+id/layout_main"
     tools:context=".MainActivity">
 
+
     <fragment
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/sceneform_fragment"
         android:name="com.tosc.pkbg.ar.CustomArFragment" />
+
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="top"
+        android:progress="100"
+        android:visibility="gone"
+        android:scaleY="10"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:id="@+id/healthProgress"/>
+
 
     <LinearLayout
         android:layout_width="match_parent"
