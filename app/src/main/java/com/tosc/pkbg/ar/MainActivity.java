@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvGameStatus;
     private ProgressBar healthProgress;
     private ImageView bloodFrame;
+    private ImageView headshotIndicator;
     private View btnShoot;
     private int currentHealth = -1;
 
@@ -95,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
         tvGameStatus = findViewById(R.id.game_status);
         bloodFrame = findViewById(R.id.image_blood_frame);
         healthProgress = findViewById(R.id.healthProgress);
+        headshotIndicator = findViewById(R.id.image_headshot);
 
         game = new Game();
         mlKit = new MLKit(this);
@@ -148,6 +150,10 @@ public class MainActivity extends AppCompatActivity {
                     mlKit.detectFace(bitmap, () -> {
                         runOnUiThread(() -> {
                             onHitAttempted(true, GameHit.HIT_HEAD);
+                            headshotIndicator.setVisibility(View.VISIBLE);
+                            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                                headshotIndicator.setVisibility(View.GONE);
+                            }, 500);
                         });
                     });
 
@@ -426,7 +432,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (isHit) {
             GameHit hit = new GameHit(getDeviceId(), hitType);
-            gameHitsRef.push().setValue(hit);
+            if (gameHitsRef != null) {
+                gameHitsRef.push().setValue(hit);
+            }
         }
     }
 
