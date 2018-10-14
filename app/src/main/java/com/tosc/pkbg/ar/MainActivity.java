@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.ar.core.Anchor;
@@ -73,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView tvHealth;
     private TextView tvGameStatus;
+    private ImageView bloodFrame;
     private View btnShoot;
     private int currentHealth = -1;
 
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
         tvHealth = findViewById(R.id.tv_health);
         tvGameStatus = findViewById(R.id.game_status);
+        bloodFrame = findViewById(R.id.image_blood_frame);
 
         game = new Game();
         mlKit = new MLKit(this);
@@ -428,6 +431,12 @@ public class MainActivity extends AppCompatActivity {
                 Utils.playPainNormal(this);
                 Utils.vibrate(this, 500);
             }
+        }
+        if (player.health < 30) {
+            bloodFrame.setVisibility(View.VISIBLE);
+        }
+        if (player.health < 20) {
+            bloodFrame.setAlpha(0.8f);
         }
         currentHealth = player.health;
         tvHealth.setText(String.valueOf(player.health));
