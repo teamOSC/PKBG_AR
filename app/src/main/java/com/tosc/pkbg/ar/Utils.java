@@ -8,11 +8,8 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.provider.Settings;
-import android.util.Log;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -30,38 +27,46 @@ public class Utils {
         bmp.recycle();
     }
 
-    static void vibrate(Context context) {
+    static void vibrate(Context context, int duration) {
         Vibrator v = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+            v.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE));
         }else{
             v.vibrate(1000);
         }
     }
 
-    static void playFireSound(Context context) {
-        MediaPlayer mPlayer;
-        mPlayer = MediaPlayer.create(context, R.raw.fire_sound);
-        mPlayer.start();
+    static void playFireEmpty(Context context) {
+        MediaPlayer mp = MediaPlayer.create(context, R.raw.fire_empty);
+        mp.start();
+        mp.setOnCompletionListener(MediaPlayer::release);
+    }
+    static void playFireNormal(Context context) {
+        MediaPlayer mp = MediaPlayer.create(context, R.raw.fire_normal);
+        mp.start();
+        mp.setOnCompletionListener(MediaPlayer::release);
+    }
+    static void playFireHeadshot(Context context) {
+        MediaPlayer mp = MediaPlayer.create(context, R.raw.fire_headshot);
+        mp.start();
+        mp.setOnCompletionListener(MediaPlayer::release);
+    }
+    static void playPainNormal(Context context) {
+        MediaPlayer mp = MediaPlayer.create(context, R.raw.pain_normal);
+        mp.start();
+        mp.setOnCompletionListener(MediaPlayer::release);
+    }
+    static void playPainHeadshot(Context context) {
+        MediaPlayer mp = MediaPlayer.create(context, R.raw.pain_headshit);
+        mp.start();
+        mp.setOnCompletionListener(MediaPlayer::release);
+    }
+    static void playReload(Context context) {
+        MediaPlayer mp = MediaPlayer.create(context, R.raw.reload);
+        mp.start();
+        mp.setOnCompletionListener(MediaPlayer::release);
     }
 
-    static void playHitSound(Context context) {
-        MediaPlayer mPlayer;
-        mPlayer = MediaPlayer.create(context, R.raw.hit_sound);
-        mPlayer.start();
-    }
-
-    static void playHeadshotSound(Context context) {
-        MediaPlayer mPlayer;
-        mPlayer = MediaPlayer.create(context, R.raw.headshot);
-        mPlayer.start();
-    }
-
-    static void playReloadSound(Context context) {
-        MediaPlayer mPlayer;
-        mPlayer = MediaPlayer.create(context, R.raw.reload);
-        mPlayer.start();
-    }
 
     public static Matrix getTransformationMatrix(
             final int srcWidth,

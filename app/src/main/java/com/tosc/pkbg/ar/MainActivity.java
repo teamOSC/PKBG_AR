@@ -2,12 +2,12 @@ package com.tosc.pkbg.ar;
 
 import android.app.AlertDialog;
 import android.net.Uri;
-import android.os.Handler;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.Settings;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         resolveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (cloudAnchor != null){
+                if (cloudAnchor != null) {
                     snackbarHelper.showMessageWithDismiss(getParent(), "Please clear Anchor");
                     return;
                 }
@@ -127,12 +127,20 @@ public class MainActivity extends AppCompatActivity {
         btnShoot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isReloading) return;
+                if (isReloading) {
+                    Utils.playFireEmpty(MainActivity.this);
+                    return;
+                }
+                isReloading = true;
+                Utils.playFireNormal(MainActivity.this);
 
                 fragment.captureBitmap(bitmap -> {
                     mlKit.detectFace(bitmap, () -> {
-                        onHitAttempted(true, GameHit.HIT_HEAD);
+                        runOnUiThread(() -> {
+                            onHitAttempted(true, GameHit.HIT_HEAD);
+                        });
                     });
+
                     onHitAttempted(tfMobile.detectImage(bitmap), GameHit.HIT_BODY);
                 }, false);
             }
@@ -164,12 +172,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-    private void onResolveOkPressed(String dialogValue){
+    private void onResolveOkPressed(String dialogValue) {
         int shortCode = Integer.parseInt(dialogValue);
         setupNewGame(shortCode);
-        storageManager.getCloudAnchorID(shortCode,(cloudAnchorId) -> {
+        storageManager.getCloudAnchorID(shortCode, (cloudAnchorId) -> {
             Anchor resolvedAnchor = fragment.getArSceneView().getSession().resolveCloudAnchor(cloudAnchorId);
             setCloudAnchor(resolvedAnchor);
             placeObject(fragment, cloudAnchor, Uri.parse("USMC_flag.sfb"), false);
@@ -180,9 +186,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-    private void setCloudAnchor (Anchor newAnchor){
-        if (cloudAnchor != null){
+    private void setCloudAnchor(Anchor newAnchor) {
+        if (cloudAnchor != null) {
             cloudAnchor.detach();
         }
 
@@ -191,12 +196,12 @@ public class MainActivity extends AppCompatActivity {
         snackbarHelper.hide(this);
     }
 
-    private void onUpdateFrame(FrameTime frameTime){
+    private void onUpdateFrame(FrameTime frameTime) {
         checkUpdatedAnchor();
     }
 
-    private synchronized void checkUpdatedAnchor(){
-        if (appAnchorState != AppAnchorState.HOSTING && appAnchorState != AppAnchorState.RESOLVING){
+    private synchronized void checkUpdatedAnchor() {
+        if (appAnchorState != AppAnchorState.HOSTING && appAnchorState != AppAnchorState.RESOLVING) {
             return;
         }
         Anchor.CloudAnchorState cloudState = cloudAnchor.getCloudAnchorState();
@@ -207,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
                 appAnchorState = AppAnchorState.NONE;
             } else if (cloudState == Anchor.CloudAnchorState.SUCCESS) {
                 storageManager.nextShortCode((shortCode) -> {
-                    if (shortCode == null){
+                    if (shortCode == null) {
                         snackbarHelper.showMessageWithDismiss(this, "Could not get shortCode");
                         return;
                     }
@@ -222,14 +227,12 @@ public class MainActivity extends AppCompatActivity {
 
                 appAnchorState = AppAnchorState.HOSTED;
             }
-        }
-
-        else if (appAnchorState == AppAnchorState.RESOLVING){
+        } else if (appAnchorState == AppAnchorState.RESOLVING) {
             if (cloudState.isError()) {
                 snackbarHelper.showMessageWithDismiss(this, "Error resolving anchor.. "
                         + cloudState);
                 appAnchorState = AppAnchorState.NONE;
-            } else if (cloudState == Anchor.CloudAnchorState.SUCCESS){
+            } else if (cloudState == Anchor.CloudAnchorState.SUCCESS) {
                 snackbarHelper.showMessageWithDismiss(this, "Anchor resolved successfully");
                 appAnchorState = AppAnchorState.RESOLVED;
             }
@@ -302,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
                 findViewById(R.id.iv_crosshair).setVisibility(View.GONE);
                 if (winnerId.equals(getDeviceId())) {
                     tvGameStatus.setText("WINNER WINNER CHICKEN DINNER");
-                } else  {
+                } else {
                     tvGameStatus.setText("LOST!");
                 }
             }
@@ -318,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
         Vector3 position = anchorNode.getWorldPosition();
         Quaternion rotation = anchorNode.getWorldRotation();
         DatabaseReference newObjectRef = gameWorldObjectsRef.push();
-        GameWorldObject worldObject = new GameWorldObject(position, rotation, newObjectRef.getKey(),getDeviceId());
+        GameWorldObject worldObject = new GameWorldObject(position, rotation, newObjectRef.getKey(), getDeviceId());
         game.gameWorldObject.add(worldObject);
         newObjectRef.setValue(worldObject);
     }
@@ -399,20 +402,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onHitAttempted(boolean isHit, int hitType) {
-        isReloading = true;
         if (hitType == GameHit.HIT_HEAD && isHit) {
-            Utils.playHeadshotSound(this);
-        } else  {
-            Utils.playFireSound(this);
+            Utils.playFireHeadshot(this);
         }
 
-
-        new Handler().postDelayed(() -> {
-            runOnUiThread(() -> {
-                Utils.playReloadSound(this);
-                isReloading = false;
-            });
-
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            Utils.playReload(this);
+            isReloading = false;
         }, 1000);
 
         if (isHit) {
@@ -423,9 +419,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateGameState(GamePlayer player) {
         if (currentHealth != -1) {
-            if (player.health < currentHealth) {
-                Utils.playHitSound(this);
-                Utils.vibrate(this);
+            int damage = currentHealth - player.health;
+
+            if (damage >= 30) {
+                Utils.playPainHeadshot(this);
+                Utils.vibrate(this, 1000);
+            } else if (damage > 0) {
+                Utils.playPainNormal(this);
+                Utils.vibrate(this, 500);
             }
         }
         currentHealth = player.health;
